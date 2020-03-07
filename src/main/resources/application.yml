@@ -17,6 +17,8 @@ spring:
         url-pattern: /druid/*
         login-username: admin
         login-password: 123456
+        allow:
+        deny:
   thymeleaf:
     cache: false
     mode: HTML

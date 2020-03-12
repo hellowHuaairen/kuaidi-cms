@@ -1,5 +1,6 @@
 package com.puboot.module.admin.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class User implements Serializable {
     /**
      * 用户id
      */
-    @TableId
+    @TableId(type = IdType.UUID)
     private String userId;
 
     /**

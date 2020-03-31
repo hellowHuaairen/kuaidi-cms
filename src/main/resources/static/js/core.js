@@ -151,8 +151,6 @@ var Core = (function () {
                 case 404:
                     layer.msg("对应的页面不存在！");
                     break;
-                default:
-                    layer.msg("服务器未知错误！");
             }
         })
     }

@@ -145,9 +145,6 @@ var Core = (function () {
                 d();
             }
             switch (xhr.status) {
-                case 200:
-                    $(id).html(response);
-                    break;
                 case 403:
                     layer.msg("您没有权限访问！");
                     break;
@@ -465,12 +462,13 @@ var Core = (function () {
     core.getQqInfo = function (qq, d) {
         $.ajax({  /* 使用ajax请求 */
             type: "get",  /* 请求方式为GET */
-            url: "http://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" + qq,  /* 发送请求的地址 */
+            url: "http://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" + qq,  /* 发送请求的地址 */
             dataType: "jsonp",   /* 返回JSONP格式 */
             scriptCharset: 'gbk',
             jsonp: "callback",    /* 重写回调函数名 */
             jsonpCallback: "portraitCallBack",  /* 指定回调函数名 */
             success: function (json) {  /* 请求成功输出 */
+                console.log(json)
                 if (json[qq] == undefined || json[qq][6].trim() == "") {
                     layer.msg("qq信息不存在！")
                     return;
@@ -481,6 +479,7 @@ var Core = (function () {
                 }
                 qqInfo.nickname = json[qq][6];
                 qqInfo.avatar = json[qq][0];
+                console.log(qqInfo)
                 if (typeof d == "function") {
                     d(qqInfo);
                 }

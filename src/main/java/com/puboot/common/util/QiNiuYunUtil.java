@@ -25,48 +25,55 @@ import lombok.extern.slf4j.Slf4j;
 @UtilityClass
 public class QiNiuYunUtil {
 
-    public static ResponseVo writeFile(CloudStorageConfigVo cloudStorageConfigVo, String filePath, byte[] uploadBytes) {
-
+    /**
+     * 上传文件
+     * @param cloudStorageConfig
+     * @param filePath
+     * @param uploadBytes
+     * @return
+     */
+    public static ResponseVo<?> uploadFile(CloudStorageConfigVo cloudStorageConfig, String filePath, byte[] uploadBytes) {
+        // 上传文件到七牛云
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration();
         //...其他参数参考类注释
         UploadManager uploadManager = new UploadManager(cfg);
         //...生成上传凭证，然后准备上传
-        String accessKey = cloudStorageConfigVo.getQiniuAccessKey();
-        String secretKey = cloudStorageConfigVo.getQiniuSecretKey();
-        String bucket = cloudStorageConfigVo.getQiniuBucketName();
+        String accessKey = cloudStorageConfig.getQiniuAccessKey();
+        String secretKey = cloudStorageConfig.getQiniuSecretKey();
+        String bucket = cloudStorageConfig.getQiniuBucketName();
         //默认不指定key的情况下，以文件内容的hash值作为文件名
-        String key = filePath;
         Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket);
         try {
-            Response response = uploadManager.put(uploadBytes, key, upToken);
-            //解析上传成功的结果
-            DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
-/*                System.out.println(putRet.key);
-            System.out.println(putRet.hash);*/
-            return new ResponseVo(CoreConst.SUCCESS_CODE, "上传成功");
-        } catch (QiniuException ex) {
-            log.error("七牛云-上传文件发生异常", ex);
-            Response r = ex.response;
+            uploadManager.put(uploadBytes, filePath, upToken);
+            return ResultUtil.success("上传成功");
+        } catch (QiniuException e) {
+            log.error("七牛云-上传文件发生异常", e);
+            Response r = e.response;
             try {
-                return new ResponseVo(CoreConst.FAIL_CODE, r.bodyString());
-            } catch (QiniuException e) {
-                return new ResponseVo(CoreConst.FAIL_CODE, "七牛云异常！");
+                return ResultUtil.error(r.bodyString());
+            } catch (QiniuException ex) {
+                return ResultUtil.error("七牛云异常！", ex.error());
             }
         }
     }
 
+    /**
+     * 删除文件
+     * @param cloudStorageConfigVo
+     * @param filePath
+     * @return
+     */
     public static boolean deleteFile(CloudStorageConfigVo cloudStorageConfigVo, String filePath) {
         Configuration cfg = new Configuration();
         String accessKey = cloudStorageConfigVo.getQiniuAccessKey();
         String secretKey = cloudStorageConfigVo.getQiniuSecretKey();
         String bucket = cloudStorageConfigVo.getQiniuBucketName();
-        String key = filePath;
         Auth auth = Auth.create(accessKey, secretKey);
         BucketManager bucketManager = new BucketManager(auth, cfg);
         try {
-            bucketManager.delete(bucket, key);
+            bucketManager.delete(bucket, filePath);
             return true;
         } catch (QiniuException ex) {
             //如果遇到异常，说明删除失败
@@ -75,6 +82,12 @@ public class QiNiuYunUtil {
         return false;
     }
 
+    /**
+     * 批量删除文件
+     * @param cloudStorageConfigVo
+     * @param keyList
+     * @return
+     */
     public static boolean deleteFileBatch(CloudStorageConfigVo cloudStorageConfigVo, String[] keyList) {
         Configuration cfg = new Configuration();
         String accessKey = cloudStorageConfigVo.getQiniuAccessKey();

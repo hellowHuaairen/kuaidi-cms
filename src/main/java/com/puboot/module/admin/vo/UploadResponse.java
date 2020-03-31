@@ -1,6 +1,8 @@
 package com.puboot.module.admin.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * @author Linzhaoguan
@@ -18,7 +20,7 @@ public class UploadResponse {
     private Integer status;
     private String msg;
 
-    public UploadResponse(String fileName, String originalFileName, String type, String url, Integer status) {
+    private UploadResponse(String fileName, String originalFileName, String type, String url, Integer status) {
         this.fileName = fileName;
         this.originalFileName = originalFileName;
         this.type = type;
@@ -26,19 +28,32 @@ public class UploadResponse {
         this.status = status;
     }
 
-    public UploadResponse(String originalFileName, Integer status, String msg) {
+    private UploadResponse(String originalFileName, Integer status, String msg) {
         this.originalFileName = originalFileName;
         this.status = status;
         this.msg = msg;
     }
 
-    public static final class Error {
-        public static final String NONE = "None";
-        public static final String OVERSIZE = "File Size largger than the maximum";
-        public static final String ILLEGALEXTENSION = "Unsupported file type";
-        public static final String FILENOTFOUND = "FileNotFound";
+    public static UploadResponse success(String fileName, String originalFileName, String type, String url, Integer status) {
+        return new UploadResponse(fileName, originalFileName, type, url, status);
+    }
 
-        private Error() {
-        }
+    public static UploadResponse failed(String originalFileName, Integer status, String msg) {
+        return new UploadResponse(originalFileName, status, msg);
+    }
+
+    @AllArgsConstructor
+    public enum ErrorEnum {
+        //无
+        NONE("None"),
+        // 文件超出大小限制
+        OVER_SIZE("File Size largger than the maximum"),
+        // 文件格式不合规范
+        ILLEGAL_EXTENSION("Unsupported file type"),
+        // 文件不存在
+        FILE_NOT_FOUND("File Not Found");
+
+        public final String msg;
+
     }
 }

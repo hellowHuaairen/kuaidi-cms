@@ -12,7 +12,9 @@ import lombok.Data;
  */
 @Data
 public class CloudStorageConfigVo {
-    //类型 1：七牛  2：阿里云  3：腾讯云
+    /**
+     * 类型 1：七牛  2：阿里云  3：腾讯云  4：本地
+     */
     private Integer type;
 
     //七牛绑定的域名
@@ -53,5 +55,10 @@ public class CloudStorageConfigVo {
     private String qcloudBucketName = "";
     //腾讯云COS所属地区
     private String qcloudRegion = "";
+
+    /**
+     * 本地文件存储绝对路径
+     */
+    private String localPath;
 
 }

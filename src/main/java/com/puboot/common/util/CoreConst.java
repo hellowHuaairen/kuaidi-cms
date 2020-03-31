@@ -24,4 +24,13 @@ public class CoreConst {
 
     public static final String ADMIN_PREFIX = "admin/";
 
+    /**
+     * 文件存储服务类型
+     * 1：七牛  2：阿里云  3：腾讯云  4：本地
+     */
+    public static final int UPLOAD_TYPE_QINIUYUN = 1;
+    public static final int UPLOAD_TYPE_ALIYUN = 2;
+    public static final int UPLOAD_TYPE_QCLOUD = 3;
+    public static final int UPLOAD_TYPE_LOCAL = 4;
+
 }
